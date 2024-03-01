@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Chat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Welcome to Group Chat</h1>
+    <form action="/create_group" method="post">
+        <label for="group_key">Enter Group Key:</label>
+        <input type="text" id="group_key" name="group_key" required>
+        <button type="submit">Create Group</button>
+    </form>
+</body>
+</html>

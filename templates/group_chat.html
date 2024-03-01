@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Group Chat - {{ group_key }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>Group Chat - {{ group_key }}</h1>
+    <ul id="user-list"></ul>
+    <ul id="message-list"></ul>
+    <form id="chat-form">
+        <input type="text" id="message-input" autocomplete="off" placeholder="Type your message...">
+        <button type="submit">Send</button>
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io.connect('http://' + document.domain + ':' + location.port);
+        const groupKey = '{{ group_key }}';
+        const username = prompt('Enter your username:');
+
+        socket.emit('join_group', { group_key: groupKey, username: username });
+
+        socket.on('update_users', data => {
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = data.users.map(user => <li>${user}</li>).join('');
+        });
+
+        socket.on('message', data => {
+            const messageList = document.getElementById('message-list');
+            messageList.innerHTML += <li><strong>${data.username}:</strong> ${data.message}</li>;
+        });
+
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+
+        chatForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const message = messageInput.value.trim();
+            if (message !== '') {
+                socket.emit('chat_message', { group_key: groupKey, username: username, message: message });
+                messageInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
